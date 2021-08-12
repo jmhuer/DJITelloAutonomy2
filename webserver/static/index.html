@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <meta charset="utf-8"/>
+        <meta name="description" content="WebRTC code samples"/>
+        <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1, maximum-scale=1"/>
+        <meta itemprop="description" content="Client-side WebRTC code samples"/>
+        <meta itemprop="image" content="../../../images/webrtc-icon-192x192.png"/>
+        <meta itemprop="name" content="WebRTC code samples"/>
+        <meta name="mobile-web-app-capable" content="yes"/>
+        <meta id="theme-color" name="theme-color" content="#ffffff"/>
+
+        <base target="_blank"/>
+
+        <title>Smart drone</title>
+        <link href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="main.css"/>
+
+    </head>
+
+    <body class="noselect" onload="init()">
+
+        <div id="container">
+            <h1>Smart drone remote operation</h1>
+            <video id="remoteVideo" playsinline autoplay></video>
+            <div class="box">
+                <button id="callButton">Connect</button>
+                <button id="hangupButton">Disconnect</button>
+            </div>
+            <div>
+                <div class="container space-top">
+                    <h1 class="center blue-text thin">Drone Joystick</h1>
+                    <canvas id="joystick-left" class="joystick left" height="300" width="300"></canvas>
+                    <canvas id="joystick-right" class="joystick right" height="300" width="300"></canvas>
+                </div>
+            </div>
+
+        </div>
+
+        <script src="webrtc-lib.js"></script>
+        <script src="createjs-lib.js"></script>
+        <script src="hammer-lib.js"></script>
+
+        <script src="joystick.js"></script>
+        <script src="webrtc.js"></script>
+        <script src="main.js"></script>
+    </body>
+</html>
