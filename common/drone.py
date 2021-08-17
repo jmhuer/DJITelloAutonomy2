@@ -5,6 +5,9 @@ import time
 import cv2
 from djitellopy import tello as drone
 
+from .cytron_motor import Cytron_Motor
+
+
 
 class Drone:
 	is_flying = False
@@ -15,14 +18,15 @@ class Drone:
 		self.drone_locator.watch()
 		self.mock = mock
 		self.video_stream = self.start_stream()
+		self.robot = Cytron_Motor(9600)
 
 	def start(self):
 		if self.mock:
 			print("Starting mocked drone")
 			return
 
-		self.sdk.connect()
-		self.sdk.streamon()
+		# self.sdk.connect()
+		# self.sdk.streamon()
 
 	def get_frame(self):
 		return self.video_stream()
@@ -56,9 +60,15 @@ class Drone:
 		self.is_flying = False
 		if not self.mock and self.sdk.is_flying:
 			self.sdk.land()
+	def map_drone2robot(self, right_left, forward_back, up_down, rotation):
+		speed = (-1) * up_down
+		turn = rotation
+		return speed, turn
 
 	def update(self, right_left, forward_back, up_down, rotation):
 		self.drone_locator.update_axis(right_left, forward_back, up_down, rotation)
+		speed, turn = self.map_drone2robot(right_left, forward_back, up_down, rotation)
+		self.robot.steerMove(speed, turn)
 		if not self.mock:
 			self.sdk.send_rc_control(right_left, forward_back, up_down, rotation)
 			return
@@ -70,6 +80,79 @@ class Drone:
 
 	def clean_position_history(self):
 		self.drone_locator.points = [(0, 0)]
+
+
+
+
+
+
+
+
+
+# class Drone:
+# 	is_flying = False
+#
+# 	def __init__(self, mock: bool):
+# 		self.sdk = drone.Tello()
+# 		self.drone_locator = DroneLocator()
+# 		self.drone_locator.watch()
+# 		self.mock = mock
+# 		self.video_stream = self.start_stream()
+#
+# 	def start(self):
+# 		if self.mock:
+# 			print("Starting mocked drone")
+# 			return
+#
+# 		self.sdk.connect()
+# 		self.sdk.streamon()
+#
+# 	def get_frame(self):
+# 		return self.video_stream()
+#
+# 	def start_stream(self):
+# 		if not self.mock:
+# 			return lambda: self.sdk.get_frame_read().frame
+#
+# 		cap = cv2.VideoCapture(0)
+# 		return lambda: cap.read()[1]
+#
+# 	def get_battery(self):
+# 		if not self.mock:
+# 			return self.sdk.get_battery()
+# 		return 100
+#
+# 	def get_wifi_signal(self):
+# 		if not self.mock:
+# 			signal_noise_ratio = self.sdk.query_wifi_signal_noise_ratio()
+# 			print(signal_noise_ratio)
+# 			return signal_noise_ratio
+#
+#
+# 	def takeoff(self):
+# 		self.is_flying = True
+# 		if not self.mock:
+# 			self.sdk.takeoff()
+#
+#
+# 	def land(self):
+# 		self.is_flying = False
+# 		if not self.mock and self.sdk.is_flying:
+# 			self.sdk.land()
+#
+# 	def update(self, right_left, forward_back, up_down, rotation):
+# 		self.drone_locator.update_axis(right_left, forward_back, up_down, rotation)
+# 		if not self.mock:
+# 			self.sdk.send_rc_control(right_left, forward_back, up_down, rotation)
+# 			return
+# 		print(right_left, forward_back, up_down, rotation)
+#
+#
+# 	def get_position_history(self):
+# 		return self.drone_locator.points
+#
+# 	def clean_position_history(self):
+# 		self.drone_locator.points = [(0, 0)]
 
 
 class DroneLocator:
