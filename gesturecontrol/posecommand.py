@@ -1,6 +1,23 @@
 import time
 
 from simple_pid import PID
+from phue import Bridge
+
+light = {
+	'colors': [1000, 20000, 35000, 50920, 60000],
+	'colors_index': 0,
+	'brightness': [0, .1, 0.2, 0.3, 0.4, 0.5, 0.6,0.7, 0.8, 0.9, 1],
+	'brightness_index': 0
+}
+
+
+#me 
+def change_light(b):
+	global light
+	new_hue = light['colors'][light['colors_index']]
+	b.set_light('Color lamp', 'hue', new_hue)
+	light['colors_index'] += 1
+	if light['colors_index'] == (len(light['colors']) - 1) : light['colors_index']  = 0
 
 
 class PoseCommandRunner:
@@ -9,6 +26,8 @@ class PoseCommandRunner:
 		self.controller = controller
 		self.log = log
 		self.commands = self.get_commands()
+		#me
+		self.b = Bridge("10.99.60.64")
 
 	def run(self, pose):
 		if pose in self.commands:
@@ -35,8 +54,10 @@ class PoseCommandRunner:
 		log.info("GOING BACKWARD from pose")
 		controller.axis_speed["forward-back"] = -controller.def_speed["forward-back"]
 
-	@staticmethod
-	def lock_dist(controller, log):
+	def lock_dist(self, controller, log):
+		#me
+		change_light(self.b)
+
 		# Locked distance mode
 		if controller.keep_distance is None:
 			if time.time() - controller.timestamp_keep_distance > controller.toggle_action_interval:

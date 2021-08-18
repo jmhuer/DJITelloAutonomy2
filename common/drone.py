@@ -55,24 +55,30 @@ class Drone:
 		if not self.mock:
 			self.sdk.takeoff()
 
-
 	def land(self):
 		self.is_flying = False
 		if not self.mock and self.sdk.is_flying:
 			self.sdk.land()
+
 	def map_drone2robot(self, right_left, forward_back, up_down, rotation):
 		speed = (-1) * up_down
-		turn = rotation
+		turn =  (-1) * rotation
 		return speed, turn
 
 	def update(self, right_left, forward_back, up_down, rotation):
 		self.drone_locator.update_axis(right_left, forward_back, up_down, rotation)
 		speed, turn = self.map_drone2robot(right_left, forward_back, up_down, rotation)
-		self.robot.steerMove(speed, turn)
+	
+		if turn > 12: self.robot.turnLeft(turn +20) 
+		elif turn < -12: self.robot.turnRight((-1) * turn +20)
+		else: self.robot.setspeed(speed)
+
+		if speed + turn ==0: self.robot.stop()
+		#self.robot.steerMove(speed, turn)
 		if not self.mock:
 			self.sdk.send_rc_control(right_left, forward_back, up_down, rotation)
 			return
-		print(right_left, forward_back, up_down, rotation)
+		print("speed " + str(speed) , "turn " + str(turn) )
 
 
 	def get_position_history(self):
@@ -80,8 +86,6 @@ class Drone:
 
 	def clean_position_history(self):
 		self.drone_locator.points = [(0, 0)]
-
-
 
 
 

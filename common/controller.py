@@ -16,6 +16,9 @@ from common.cameramorse import CameraMorse
 from common.drone import Drone
 from common.pygamescreen import PyGameScreen
 from common.soundplayer import SoundPlayer, Tone
+#me 
+from common.cytron_motor import Cytron_Motor
+#
 from gesturecontrol.posecheck import PoseChecker
 from gesturecontrol.posecommand import PoseCommandRunner
 from gesturecontrol.tracking import PersonTracker
@@ -41,7 +44,7 @@ class TelloEngine(object):
 		self.axis_speed = {"rotation": 0, "right-left": 0, "forward-back": 0, "up-down": 0}
 		self.cmd_axis_speed = {"rotation": 0, "right-left": 0, "forward-back": 0, "up-down": 0}
 		self.prev_axis_speed = self.axis_speed.copy()
-		self.def_speed = {"rotation": 50, "right-left": 35, "forward-back": 35, "up-down": 80}
+		self.def_speed = {"rotation": 50, "right-left": 35, "forward-back": 35, "up-down": 50}
 		self.rotation = 0
 		self.toggle_tracking_timestamp = time.time() - 3
 		self.tracking_after_takeoff = False
@@ -70,6 +73,7 @@ class TelloEngine(object):
 		self.pygame_screen.add_listeners()
 
 		self.path_manager = PathManager(self.pygame_screen, self.drone)
+		#me 
 
 	def open_path_panning(self):
 		""" Open the path planning screen for drawing the drone path"""
